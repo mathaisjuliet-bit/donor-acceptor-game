@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🧪 Ionic Bond Arrow Challenge</title>
+<style>
+body{font-family:Arial,sans-serif;background:linear-gradient(135deg,#eef7ff,#fff7e6);margin:0;padding:20px;color:#172033}
+.wrap{max-width:1100px;margin:auto}
+h1{margin:0 0 6px;text-align:center}
+.sub{text-align:center;color:#536274;margin-bottom:18px}
+.panel{background:white;border:1px solid #dbe3ee;border-radius:18px;padding:16px;margin:14px 0;box-shadow:0 5px 18px rgba(40,70,100,.08)}
+.stats{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.stat{padding:10px 18px;border-radius:14px;background:#f3f7ff;text-align:center;min-width:100px}
+.stat b{display:block;font-size:25px}.stat span{font-size:12px;color:#64748b}
+.timer{background:#fff1d6}
+table{width:100%;border-collapse:collapse;min-width:720px;font-size:13px}
+th,td{padding:7px 9px;border-bottom:1px solid #e5e7eb;text-align:left}
+th{background:#eaf2ff}
+.tablewrap{overflow:auto;border:1px solid #dbe3ee;border-radius:12px}
+.activity{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+.box{padding:14px;border-radius:16px}
+.donors{background:#eefbf2;border:2px solid #b9e6c5}
+.acceptors{background:#fff2ef;border:2px solid #f4c3b8}
+.atomlist{display:grid;grid-template-columns:repeat(auto-fit,minmax(95px,1fr));gap:9px}
+.atom{border:2px solid #dbe3ee;background:white;border-radius:14px;padding:10px;min-height:70px;cursor:grab;text-align:center;touch-action:none}
+.atom:hover{transform:translateY(-2px)}
+.atom.selected{border-color:#2563eb;background:#e8f0ff}
+.atom.target{border-style:dashed;border-color:#ef6c57;background:#fff7f5}
+.symbol{font-size:24px;font-weight:800;display:block}.name{font-size:11px;color:#64748b}
+button{border:0;border-radius:12px;padding:11px 16px;font-weight:700;cursor:pointer;min-height:44px}
+.primary{background:#2563eb;color:white}.secondary{background:#e7eef8;color:#172033}
+.message{text-align:center;font-weight:700;min-height:24px;margin-top:12px}
+.results{display:none;background:#f6fbff;border:2px solid #b8d8f2}
+.results.show{display:block}
+.connections{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.connection{background:white;border:1px solid #cbd5e1;border-radius:999px;padding:7px 10px;font-size:12px}
+.note{font-size:12px;color:#64748b;margin-top:8px;line-height:1.4}
+@media(max-width:700px){.activity{grid-template-columns:1fr}body{padding:10px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>🧪⚡ Ionic Bond Arrow Challenge ⚡🧪</h1>
+<div class="sub">Can you connect the atoms before the ⏱️ 3-minute timer runs out?</div>
+
+<div class="panel">
+<div class="stats">
+<div class="stat timer"><b id="time">03:00</b><span>⏱️ Time left</span></div>
+<div class="stat"><b id="score">0</b><span>🏆 Score</span></div>
+<div class="stat"><b id="correct">0</b><span>✅ Correct</span></div>
+<div class="stat"><b id="wrong">0</b><span>❌ Wrong</span></div>
+</div>
+</div>
+
+<div class="panel">
+<h2>📚 Reference Table — Keep this open while you play</h2>
+<div class="tablewrap">
+<table>
+<thead><tr><th>No.</th><th>Element</th><th>Symbol</th><th>Electronic distribution</th><th>Valence e⁻</th><th>Game role</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Hydrogen</td><td>H</td><td>1</td><td>1</td><td>🟢 Donor</td></tr>
+<tr><td>2</td><td>Helium</td><td>He</td><td>2</td><td>2</td><td>⚪ Not used</td></tr>
+<tr><td>3</td><td>Lithium</td><td>Li</td><td>2,1</td><td>1</td><td>🟢 Donor</td></tr>
+<tr><td>4</td><td>Beryllium</td><td>Be</td><td>2,2</td><td>2</td><td>🟢 Donor</td></tr>
+<tr><td>5</td><td>Boron</td><td>B</td><td>2,3</td><td>3</td><td>⚪ Not used</td></tr>
+<tr><td>6</td><td>Carbon</td><td>C</td><td>2,4</td><td>4</td><td>⚪ Not used</td></tr>
+<tr><td>7</td><td>Nitrogen</td><td>N</td><td>2,5</td><td>5</td><td>🔴 Acceptor</td></tr>
+<tr><td>8</td><td>Oxygen</td><td>O</td><td>2,6</td><td>6</td><td>🔴 Acceptor</td></tr>
+<tr><td>9</td><td>Fluorine</td><td>F</td><td>2,7</td><td>7</td><td>🔴 Acceptor</td></tr>
+<tr><td>10</td><td>Neon</td><td>Ne</td><td>2,8</td><td>8</td><td>⚪ Not used</td></tr>
+<tr><td>11</td><td>Sodium</td><td>Na</td><td>2,8,1</td><td>1</td><td>🟢 Donor</td></tr>
+<tr><td>12</td><td>Magnesium</td><td>Mg</td><td>2,8,2</td><td>2</td><td>🟢 Donor</td></tr>
+<tr><td>13</td><td>Aluminium</td><td>Al</td><td>2,8,3</td><td>3</td><td>🟢 Donor</td></tr>
+<tr><td>14</td><td>Silicon</td><td>Si</td><td>2,8,4</td><td>4</td><td>⚪ Not used</td></tr>
+<tr><td>15</td><td>Phosphorus</td><td>P</td><td>2,8,5</td><td>5</td><td>🔴 Acceptor</td></tr>
+<tr><td>16</td><td>Sulphur</td><td>S</td><td>2,8,6</td><td>6</td><td>🔴 Acceptor</td></tr>
+<tr><td>17</td><td>Chlorine</td><td>Cl</td><td>2,8,7</td><td>7</td><td>🔴 Acceptor</td></tr>
+<tr><td>18</td><td>Argon</td><td>Ar</td><td>2,8,8</td><td>8</td><td>⚪ Not used</td></tr>
+<tr><td>19</td><td>Potassium</td><td>K</td><td>2,8,8,1</td><td>1</td><td>🟢 Donor</td></tr>
+<tr><td>20</td><td>Calcium</td><td>Ca</td><td>2,8,8,2</td><td>2</td><td>🟢 Donor</td></tr>
+</tbody>
+</table>
+</div>
+<div class="note">⭐ Game rule: every unique donor → acceptor connection is worth 2 points. The same acceptor may receive arrows from many different donors. H → F is accepted here as a simplified electron-transfer practice rule; real HF is covalent.</div>
+</div>
+
+<div class="panel">
+<div class="activity">
+<div class="box donors">
+<h2>🟢 Atoms that LOSE electrons</h2>
+<p>Drag from one of these atoms ➡️</p>
+<div id="donors" class="atomlist"></div>
+</div>
+<div class="box acceptors">
+<h2>🔴 Atoms that GAIN electrons</h2>
+<p>Drop your arrow on one of these atoms 🎯</p>
+<div id="acceptors" class="atomlist"></div>
+</div>
+</div>
+<div id="message" class="message" aria-live="polite"></div>
+</div>
+
+<div id="results" class="panel results">
+<h2>🎉 Time's Up!</h2>
+<div class="stats">
+<div class="stat"><b id="finalScore">0</b><span>🏆 Final score</span></div>
+<div class="stat"><b id="finalCorrect">0</b><span>✅ Correct connections</span></div>
+</div>
+<h3>🔗 Correct connections made</h3>
+<div id="connections" class="connections"></div>
+<button id="restart" class="primary">🔄 Restart Challenge</button>
+</div>
+</div>
+
+<script>
+(function(){
+const donors=[['H','Hydrogen'],['Li','Lithium'],['Be','Beryllium'],['Na','Sodium'],['Mg','Magnesium'],['Al','Aluminium'],['K','Potassium'],['Ca','Calcium']];
+const acceptors=[['N','Nitrogen'],['O','Oxygen'],['F','Fluorine'],['P','Phosphorus'],['S','Sulphur'],['Cl','Chlorine']];
+let score=0,correct=0,wrong=0,time=180,running=true,dragging=null,timer=null;
+const used=new Set();
+const $=id=>document.getElementById(id);
+function make(pair,type){
+const b=document.createElement('button');b.type='button';b.className='atom';b.dataset.symbol=pair[0];b.dataset.type=type;
+b.innerHTML='<span class="symbol">'+pair[0]+'</span><span class="name">'+pair[1]+'</span>';
+b.addEventListener('pointerdown',start);return b;
+}
+donors.forEach(x=>$('donors').appendChild(make(x,'donor')));
+acceptors.forEach(x=>$('acceptors').appendChild(make(x,'acceptor')));
+function update(){
+$('score').textContent=score;$('correct').textContent=correct;$('wrong').textContent=wrong;
+$('time').textContent=String(Math.floor(time/60)).padStart(2,'0')+':'+String(time%60).padStart(2,'0');
+}
+function start(e){
+if(!running)return;e.preventDefault();dragging=e.currentTarget;dragging.classList.add('selected');
+document.addEventListener('pointermove',move);document.addEventListener('pointerup',end,{once:true});document.addEventListener('pointercancel',cancel,{once:true});
+}
+function move(e){
+if(!dragging)return;
+document.querySelectorAll('.atom.target').forEach(x=>x.classList.remove('target'));
+const t=document.elementFromPoint(e.clientX,e.clientY)?.closest?.('.atom');
+if(t&&t.dataset.type==='acceptor')t.classList.add('target');
+}
+function end(e){
+if(!dragging)return;
+const s=dragging,d=s.dataset.symbol,t=document.elementFromPoint(e.clientX,e.clientY)?.closest?.('.atom');
+s.classList.remove('selected');document.querySelectorAll('.atom.target').forEach(x=>x.classList.remove('target'));
+document.removeEventListener('pointermove',move);dragging=null;
+if(t&&t.dataset.type==='acceptor'){
+const a=t.dataset.symbol,key=d+' → '+a;
+if(used.has(key)){wrong++;$('message').textContent='❌ Already scored: '+key;}
+else{used.add(key);correct++;score+=2;$('message').textContent='✅ Correct! '+key+'  +2 points 🎯';}
+update();
+}
+}
+function cancel(){if(dragging){dragging.classList.remove('selected');document.querySelectorAll('.atom.target').forEach(x=>x.classList.remove('target'));document.removeEventListener('pointermove',move);dragging=null;}}
+function finish(){
+if(!running)return;running=false;clearInterval(timer);time=0;update();
+$('finalScore').textContent=score;$('finalCorrect').textContent=correct;$('connections').innerHTML='';
+[...used].forEach(k=>{const s=document.createElement('span');s.className='connection';s.textContent=k+' (+2)';$('connections').appendChild(s);});
+$('results').classList.add('show');$('message').textContent='🎉 Challenge complete!';document.querySelectorAll('.atom').forEach(x=>x.disabled=true);
+}
+function restart(){score=0;correct=0;wrong=0;time=180;running=true;used.clear();$('results').classList.remove('show');$('message').textContent='';document.querySelectorAll('.atom').forEach(x=>{x.disabled=false;x.classList.remove('selected','target')});update();clearInterval(timer);timer=setInterval(()=>{time--;update();if(time<=0)finish()},1000);}
+$('restart').addEventListener('click',restart);update();timer=setInterval(()=>{time--;update();if(time<=0)finish()},1000);
+})();
+</script>
+</body>
+</html>
